@@ -131,15 +131,31 @@ resource "aws_s3_bucket" "fra_bucket" {
   provider      = aws.fra
 }
 
-module "fra_vpc" {
+module "far_simple_lambda_function" {
+  source = "terraform-aws-modules/lambda/aws"
   providers = {
     aws = aws.fra
   }
-  source         = "terraform-aws-modules/vpc/aws"
-  name           = "my-vpc"
-  cidr           = "10.0.0.0/16"
-  azs            = ["eu-central-1a"]
-  public_subnets = ["10.0.1.0/24"]
+
+  function_name = "simple-lambda"
+  description   = "My awesome lambda function"
+  handler       = "index.handler"
+  runtime       = "nodejs14.x"
+
+  source_path = "./simple_lambda"
+
+  attach_policy_statements = true
+  policy_statements = {
+    s3_read = {
+      effect    = "Allow",
+      actions   = ["s3:ListBuckets"],
+      resources = ["*"]
+    }
+  }
+
+  tags = {
+    Name = "simple-lambda"
+  }
 }
 
 output "fra_bucket_arn" {
