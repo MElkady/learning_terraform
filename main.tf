@@ -148,7 +148,7 @@ module "far_simple_lambda_function" {
   policy_statements = {
     s3_read = {
       effect    = "Allow",
-      actions   = ["s3:ListBuckets"],
+      actions   = ["s3:ListAllMyBuckets"],
       resources = ["*"]
     }
   }
